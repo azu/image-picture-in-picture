@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>pip image</title>
+    <style>
+        img {
+            display: block;
+            padding: 12px;
+        }
+
+        #main {
+            display: flex;
+        }
+
+        #images {
+            flex: 1;
+        }
+
+        #content {
+            flex: 1;
+            font-size: 24px;
+        }
+
+        .image-placeholder-wrapper {
+            width: 600px;
+            height: 400px;
+            position: relative;
+        }
+
+        .image-placeholder {
+            width: 600px;
+            height: 400px;
+            position: relative;
+        }
+
+        .rotate {
+            display: block;
+            margin: 12px;
+            /*     right bottom */
+            position: absolute;
+            right: 0;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+<main id="main">
+    <div id="images">
+        <div class="image-placeholder-wrapper">
+            <div class="image-placeholder">
+                <div class="pip-image">
+                    <img id=image1 src="https://placehold.co/600x400" alt="pip image">
+                    <button data-image-id="image1" class="rotate">Rotate</button>
+                </div>
+            </div>
+        </div>
+        <div class="image-placeholder-wrapper">
+            <div class="image-placeholder">
+                <div class="pip-image">
+                    <img id=image2 src="https://placehold.co/600x400/000000/FFFFFF/png" alt="pip image">
+                    <button data-image-id="image2" class="rotate">Rotate</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="content">
+        <h1>Content LIST</h1>
+        <ul>
+            <li>CONTENT</li>
+            <li>CONTENT</li>
+            <li>CONTENT</li>
+            <li>CONTENT</li>
+            <li>CONTENT</li>
+            <li>CONTENT</li>
+            <li>CONTENT</li>
+        </ul>
+    </div>
+</main>
+<script>
+
+    // https://developer.chrome.com/docs/web-platform/document-picture-in-picture?hl=ja
+    const imageContainers = document.querySelectorAll(".image-placeholder");
+    for (const imageContainer of imageContainers) {
+        const originalParentElement = imageContainer.parentElement;
+        imageContainer.addEventListener("click", async () => {
+            // Open a Picture-in-Picture window.
+            const pipWindow = await documentPictureInPicture.requestWindow({
+                width: 640,
+                height: 440
+            });
+            // Move the player to the Picture-in-Picture window.
+            pipWindow.document.body.append(imageContainer);
+            // Move the player back when the Picture-in-Picture window closes.
+            pipWindow.addEventListener("pagehide", (event) => {
+                const image = event.target.firstElementChild;
+                originalParentElement.append(image);
+            });
+            console.log(pipWindow);
+            const rotateButton = pipWindow.document.querySelector(".rotate");
+            rotateButton.addEventListener("click", (event) => {
+                const imageId = event.target.dataset.imageId;
+                const image = pipWindow.document.querySelector(`#${imageId}`);
+                console.log({
+                    imageId,
+                    image,
+                    doc: pipWindow.document,
+                    i: document.querySelector(`#${imageId}`)
+                })
+                image.style.transform = `rotate(${(image.dataset.rotate || 0) + 90}deg)`;
+                image.dataset.rotate = (image.dataset.rotate || 0) + 90;
+            });
+        });
+    }
+</script>
+</body>
+</html>

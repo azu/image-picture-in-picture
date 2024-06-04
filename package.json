@@ -1,0 +1,73 @@
+{
+  "name": "image-picture-in-picture",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/azu/image-picture-in-picture",
+  "bugs": {
+    "url": "https://github.com/azu/image-picture-in-picture/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/azu/image-picture-in-picture.git"
+  },
+  "license": "MIT",
+  "author": "azu",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./module/image-picture-in-picture.d.ts",
+        "default": "./module/image-picture-in-picture.js"
+      },
+      "require": {
+        "types": "./lib/image-picture-in-picture.d.ts",
+        "default": "./lib/image-picture-in-picture.js"
+      },
+      "default": "./lib/image-picture-in-picture.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./lib/image-picture-in-picture.js",
+  "module": "./module/image-picture-in-picture.js",
+  "types": "./module/image-picture-in-picture.d.ts",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "files": [
+    "bin/",
+    "lib/",
+    "module/",
+    "src/"
+  ],
+  "scripts": {
+    "build": "tsc -p . && tsc -p ./tsconfig.cjs.json && tsconfig-to-dual-package",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,css}\"",
+    "prepare": "git config --local core.hooksPath .githooks",
+    "prepublishOnly": "npm run build",
+    "test": "mocha",
+    "watch": "tsc -p . --watch"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,css}": [
+      "prettier --write"
+    ]
+  },
+  "prettier": {
+    "printWidth": 120,
+    "singleQuote": false,
+    "tabWidth": 4,
+    "trailingComma": "none"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.14.1",
+    "mocha": "^10.4.0",
+    "prettier": "^3.3.0",
+    "ts-node": "^10.9.2",
+    "tsconfig-to-dual-package": "^1.2.0",
+    "typescript": "^5.4.5"
+  },
+  "packageManager": "yarn@1.22.22"
+}
