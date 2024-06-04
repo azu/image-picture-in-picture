@@ -84,6 +84,10 @@
     for (const imageContainer of imageContainers) {
         const originalParentElement = imageContainer.parentElement;
         imageContainer.addEventListener("click", async () => {
+            // if in Picture-in-Picture mode, exit
+            if(document.pictureInPictureElement) {
+                await document.exitPictureInPicture();
+            }
             // Open a Picture-in-Picture window.
             const pipWindow = await documentPictureInPicture.requestWindow({
                 width: 640,
@@ -96,17 +100,10 @@
                 const image = event.target.firstElementChild;
                 originalParentElement.append(image);
             });
-            console.log(pipWindow);
             const rotateButton = pipWindow.document.querySelector(".rotate");
             rotateButton.addEventListener("click", (event) => {
                 const imageId = event.target.dataset.imageId;
                 const image = pipWindow.document.querySelector(`#${imageId}`);
-                console.log({
-                    imageId,
-                    image,
-                    doc: pipWindow.document,
-                    i: document.querySelector(`#${imageId}`)
-                })
                 image.style.transform = `rotate(${(image.dataset.rotate || 0) + 90}deg)`;
                 image.dataset.rotate = (image.dataset.rotate || 0) + 90;
             });
