@@ -28,6 +28,10 @@
             position: relative;
         }
 
+        img:picture-in-picture, .image-placeholder:picture-in-picture, .pip-image:picture-in-picture {
+            width: 100% !important;
+        }
+
         .image-placeholder {
             width: 600px;
             height: 400px;
@@ -85,7 +89,7 @@
         const originalParentElement = imageContainer.parentElement;
         imageContainer.addEventListener("click", async () => {
             // if in Picture-in-Picture mode, exit
-            if(document.pictureInPictureElement) {
+            if (document.pictureInPictureElement) {
                 await document.exitPictureInPicture();
             }
             // Open a Picture-in-Picture window.
