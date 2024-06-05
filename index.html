@@ -78,6 +78,23 @@
                 </div>
             </div>
         </div>
+        <div class="image-placeholder-wrapper">
+            <div class="image-placeholder">
+                <div class="pip-image">
+                    <iframe width="600" height="400" id="pdf"></iframe>
+                    <script type="module">
+                        const res = await fetch(`https://corsproxy.io/?${encodeURIComponent("https://www.clib.kindai.ac.jp/search/pdf/guide_quote.pdf")}`, {});
+                        // binary
+                        const blob = await res.blob();
+                        // blob:......
+                        const url = URL.createObjectURL(blob);
+                        const pdfIframe = document.getElementById("pdf");
+                        pdfIframe.src = url;
+                    </script>
+                    <button id="pip">PiP</button>
+                </div>
+            </div>
+        </div>
     </div>
     <div id="content">
         <h1>Content LIST</h1>
@@ -96,40 +113,44 @@
 
     // https://developer.chrome.com/docs/web-platform/document-picture-in-picture?hl=ja
     const imageContainers = document.querySelectorAll(".image-placeholder");
-    for (const imageContainer of imageContainers) {
-        const originalParentElement = imageContainer.parentElement;
-        imageContainer.addEventListener("click", async () => {
-            // if in Picture-in-Picture mode, exit
-            if (document.pictureInPictureElement) {
-                await document.exitPictureInPicture();
-            }
-            // Open a Picture-in-Picture window.
-            const pipWindow = await documentPictureInPicture.requestWindow({
-                width: 640,
-                height: 440
-            });
-            // Move the player to the Picture-in-Picture window.
-            pipWindow.document.body.append(imageContainer);
-            // append style
-            const style = document.createElement("style");
-            style.textContent = `
+    for (const imageContainer_ of imageContainers) {
+        const originalParentElement = imageContainer_.parentElement;
+        const pipButton = imageContainer_.querySelector("#pip");
+        [pipButton, imageContainer_].filter(e => Boolean(e)).forEach(imageContainer => {
+            imageContainer.addEventListener("click", async () => {
+                // if in Picture-in-Picture mode, exit
+                if (document.pictureInPictureElement) {
+                    await document.exitPictureInPicture();
+                }
+                // Open a Picture-in-Picture window.
+                const pipWindow = await documentPictureInPicture.requestWindow({
+                    width: 640,
+                    height: 440
+                });
+                // Move the player to the Picture-in-Picture window.
+                pipWindow.document.body.append(imageContainer_);
+                // append style
+                const style = document.createElement("style");
+                style.textContent = `
         img, .image-placeholder, .pip-image {
             width: 100% !important;
         }`;
-            pipWindow.document.head.append(style);
-            // Move the player back when the Picture-in-Picture window closes.
-            pipWindow.addEventListener("pagehide", (event) => {
-                const image = event.target.firstElementChild;
-                originalParentElement.append(image);
+                pipWindow.document.head.append(style);
+                // Move the player back when the Picture-in-Picture window closes.
+                pipWindow.addEventListener("pagehide", (event) => {
+                    const image = event.target.firstElementChild;
+                    originalParentElement.append(image);
+                });
+                const rotateButton = pipWindow.document.querySelector(".rotate");
+                rotateButton?.addEventListener?.("click", (event) => {
+                    const imageId = event.target.dataset.imageId;
+                    const image = pipWindow.document.querySelector(`#${imageId}`);
+                    image.style.transform = `rotate(${(image.dataset.rotate || 0) + 90}deg)`;
+                    image.dataset.rotate = (image.dataset.rotate || 0) + 90;
+                });
             });
-            const rotateButton = pipWindow.document.querySelector(".rotate");
-            rotateButton.addEventListener("click", (event) => {
-                const imageId = event.target.dataset.imageId;
-                const image = pipWindow.document.querySelector(`#${imageId}`);
-                image.style.transform = `rotate(${(image.dataset.rotate || 0) + 90}deg)`;
-                image.dataset.rotate = (image.dataset.rotate || 0) + 90;
-            });
-        });
+        })
+        ;
     }
 </script>
 </body>
