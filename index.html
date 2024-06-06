@@ -91,7 +91,7 @@
                         const pdfIframe = document.getElementById("pdf");
                         pdfIframe.src = url;
                     </script>
-                    <button id="pip">PiP</button>
+                    <button id="pip" class="pip-button">PiP</button>
                 </div>
             </div>
         </div>
@@ -132,14 +132,37 @@
                 // append style
                 const style = document.createElement("style");
                 style.textContent = `
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
         img, .image-placeholder, .pip-image {
             width: 100% !important;
-        }`;
+            position: relative;
+        }
+        .pip-button {
+           display: none;
+         }
+         .rotate {
+            display: block;
+            margin: 12px;
+            /*     right bottom */
+            position: absolute;
+            right: 0;
+            bottom: 0;
+        }
+         iframe {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+         }
+        `;
                 pipWindow.document.head.append(style);
                 // Move the player back when the Picture-in-Picture window closes.
                 pipWindow.addEventListener("pagehide", (event) => {
-                    const image = event.target.firstElementChild;
-                    originalParentElement.append(image);
+                    originalParentElement.append(imageContainer_);
                 });
                 const rotateButton = pipWindow.document.querySelector(".rotate");
                 rotateButton?.addEventListener?.("click", (event) => {
